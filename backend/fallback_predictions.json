@@ -376,5 +376,215 @@
     "risk_percentage": 58.58,
     "timestamp": "2026-05-23 22:37:13",
     "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 29,
+      "Family_History": 1,
+      "Radiation_Exposure": 1,
+      "Iodine_Deficiency": 1,
+      "Smoking": 0,
+      "Obesity": 0,
+      "Diabetes": 0,
+      "TSH_Level": 2.7,
+      "T3_Level": 0.9,
+      "T4_Level": 7.7,
+      "Nodule_Size": 2.1,
+      "Thyroid_Cancer_Risk": 1,
+      "Gender_Male": 0.0
+    },
+    "prediction": "Benign",
+    "risk_percentage": 40.22,
+    "timestamp": "2026-06-08 01:53:27",
+    "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 45,
+      "Family_History": 0,
+      "Radiation_Exposure": 0,
+      "Iodine_Deficiency": 0,
+      "Smoking": 0,
+      "Obesity": 0,
+      "Diabetes": 0,
+      "TSH_Level": 2.5,
+      "T3_Level": 1.2,
+      "T4_Level": 8.0,
+      "Nodule_Size": 1.5,
+      "Thyroid_Cancer_Risk": 2,
+      "Gender_Male": 1.0
+    },
+    "prediction": "Benign",
+    "risk_percentage": 48.5,
+    "timestamp": "2026-06-08 02:09:02",
+    "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 45,
+      "Family_History": 0,
+      "Radiation_Exposure": 0,
+      "Iodine_Deficiency": 0,
+      "Smoking": 0,
+      "Obesity": 0,
+      "Diabetes": 0,
+      "TSH_Level": 2.5,
+      "T3_Level": 1.2,
+      "T4_Level": 8.0,
+      "Nodule_Size": 1.5,
+      "Thyroid_Cancer_Risk": 2,
+      "Gender_Male": 1.0
+    },
+    "prediction": "Benign",
+    "risk_percentage": 48.5,
+    "timestamp": "2026-06-08 02:13:54",
+    "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 45,
+      "Family_History": 0,
+      "Radiation_Exposure": 0,
+      "Iodine_Deficiency": 0,
+      "Smoking": 0,
+      "Obesity": 0,
+      "Diabetes": 0,
+      "TSH_Level": 2.5,
+      "T3_Level": 1.2,
+      "T4_Level": 8.0,
+      "Nodule_Size": 1.5,
+      "Thyroid_Cancer_Risk": 2,
+      "Gender_Male": 1.0
+    },
+    "prediction": "Benign",
+    "risk_percentage": 48.5,
+    "timestamp": "2026-06-08 02:14:06",
+    "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 45,
+      "Family_History": 0,
+      "Radiation_Exposure": 0,
+      "Iodine_Deficiency": 0,
+      "Smoking": 0,
+      "Obesity": 0,
+      "Diabetes": 0,
+      "TSH_Level": 2.5,
+      "T3_Level": 1.2,
+      "T4_Level": 8.0,
+      "Nodule_Size": 1.5,
+      "Thyroid_Cancer_Risk": 2,
+      "Gender_Male": 1.0
+    },
+    "prediction": "Benign",
+    "risk_percentage": 48.5,
+    "timestamp": "2026-06-08 02:17:53",
+    "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 45,
+      "Family_History": 0,
+      "Radiation_Exposure": 0,
+      "Iodine_Deficiency": 0,
+      "Smoking": 0,
+      "Obesity": 0,
+      "Diabetes": 0,
+      "TSH_Level": 2.5,
+      "T3_Level": 1.2,
+      "T4_Level": 8.0,
+      "Nodule_Size": 1.5,
+      "Thyroid_Cancer_Risk": 2,
+      "Gender_Male": 1.0
+    },
+    "prediction": "Benign",
+    "risk_percentage": 48.5,
+    "timestamp": "2026-06-08 02:24:37",
+    "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 45,
+      "Family_History": 0,
+      "Radiation_Exposure": 0,
+      "Iodine_Deficiency": 0,
+      "Smoking": 0,
+      "Obesity": 0,
+      "Diabetes": 0,
+      "TSH_Level": 2.5,
+      "T3_Level": 1.2,
+      "T4_Level": 8.0,
+      "Nodule_Size": 1.5,
+      "Thyroid_Cancer_Risk": 2,
+      "Gender_Male": 1.0
+    },
+    "prediction": "Benign",
+    "risk_percentage": 48.5,
+    "timestamp": "2026-06-08 02:25:41",
+    "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 70,
+      "Family_History": 1,
+      "Radiation_Exposure": 1,
+      "Iodine_Deficiency": 1,
+      "Smoking": 1,
+      "Obesity": 1,
+      "Diabetes": 1,
+      "TSH_Level": 8.0,
+      "T3_Level": 0.5,
+      "T4_Level": 15.0,
+      "Nodule_Size": 5.0,
+      "Thyroid_Cancer_Risk": 2,
+      "Gender_Male": 1.0
+    },
+    "prediction": "Malignant",
+    "risk_percentage": 65.2,
+    "timestamp": "2026-06-08 02:32:21",
+    "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 45,
+      "Family_History": 1,
+      "Radiation_Exposure": 1,
+      "Iodine_Deficiency": 1,
+      "Smoking": 0,
+      "Obesity": 0,
+      "Diabetes": 0,
+      "TSH_Level": 2.5,
+      "T3_Level": 0.2,
+      "T4_Level": 8.0,
+      "Nodule_Size": 1.5,
+      "Thyroid_Cancer_Risk": 2,
+      "Gender_Male": 1.0
+    },
+    "prediction": "Malignant",
+    "risk_percentage": 66.32,
+    "timestamp": "2026-06-08 02:35:19",
+    "source": "fallback"
+  },
+  {
+    "user_data": {
+      "Age": 45,
+      "Family_History": 0,
+      "Radiation_Exposure": 0,
+      "Iodine_Deficiency": 0,
+      "Smoking": 0,
+      "Obesity": 0,
+      "Diabetes": 0,
+      "TSH_Level": 2.5,
+      "T3_Level": 1.2,
+      "T4_Level": 8.0,
+      "Nodule_Size": 1.5,
+      "Thyroid_Cancer_Risk": 2,
+      "Gender_Male": 1.0
+    },
+    "prediction": "Benign",
+    "risk_percentage": 48.5,
+    "timestamp": "2026-06-08 02:35:26",
+    "source": "fallback"
   }
 ]

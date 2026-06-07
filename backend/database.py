@@ -1,6 +1,6 @@
 """
 DATABASE.PY - MongoDB Connection Module
-IMPROVED VERSION - 100% Compatible with your existing code
+IMPROVED VERSION - 100% Compatible with existing code
 """
 
 from pymongo import MongoClient

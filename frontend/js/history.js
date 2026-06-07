@@ -75,6 +75,7 @@
                 } else {
                     updateHistoryDisplay();
                     updateSummaryStats();
+                    updateCharts();
                 }
             } else {
                 showEmptyState();
@@ -126,6 +127,7 @@
         
         updateHistoryDisplay();
         updateSummaryStats();
+        updateCharts();
     }
 
     // Update History Display
@@ -229,7 +231,102 @@
     }
 
     // Show Details
-    
+    function showDetails(index) {
+        const idx = parseInt(index);
+        const item = filteredHistory[idx];
+        if (!item) return;
+
+        const modal = document.getElementById('detailsModal');
+        if (!modal) return;
+
+        // Populate modal data
+        const riskPercentage = item.risk_percentage || 0;
+        const prediction = item.prediction || 'N/A';
+        const date = new Date(item.timestamp || Date.now());
+        const age = item.user_data?.Age || 'N/A';
+        const gender = item.user_data?.Gender_Male === 1 ? 'Male' : 'Female';
+
+        document.getElementById('modalRiskValue').textContent = `${riskPercentage.toFixed(1)}%`;
+        document.getElementById('modalPredictionTitle').textContent = `Prediction Result: ${prediction}`;
+        document.getElementById('modalDateInfo').textContent = `Date: ${date.toLocaleString()}`;
+        
+        // Risk level & badges
+        const riskLevel = getRiskLevel(riskPercentage);
+        const riskLevelBadge = document.getElementById('modalRiskLevel');
+        if (riskLevelBadge) {
+            riskLevelBadge.textContent = riskLevel;
+            riskLevelBadge.className = `detail-badge risk-level-badge ${getRiskLevelClass(riskPercentage)}`;
+        }
+
+        const predictionBadge = document.getElementById('modalPredictionType');
+        if (predictionBadge) {
+            predictionBadge.textContent = prediction;
+            predictionBadge.className = `detail-badge prediction-badge ${prediction.toLowerCase()}`;
+        }
+
+        // Patient info
+        document.getElementById('modalPatientAge').textContent = `${age} years`;
+        document.getElementById('modalPatientGender').textContent = gender;
+        document.getElementById('modalTimestamp').textContent = date.toLocaleString();
+
+        // Risk factors
+        const factorsList = document.getElementById('modalRiskFactors');
+        if (factorsList) {
+            factorsList.innerHTML = '';
+            const factors = getTopFactors(item.user_data);
+            if (factors.length === 0) {
+                factorsList.innerHTML = '<div class="risk-factor no-factors"><i class="fas fa-check-circle text-success"></i> No major risk factors detected</div>';
+            } else {
+                factors.forEach(factor => {
+                    const factorDiv = document.createElement('div');
+                    factorDiv.className = 'risk-factor active';
+                    factorDiv.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${factor}`;
+                    factorsList.appendChild(factorDiv);
+                });
+            }
+        }
+
+        // Risk meter bar
+        const riskMeter = document.getElementById('modalRiskMeter');
+        if (riskMeter) {
+            riskMeter.style.width = `${riskPercentage}%`;
+            // Set risk meter color
+            if (riskPercentage < 30) {
+                riskMeter.style.backgroundColor = '#06d6a0'; // green
+            } else if (riskPercentage < 70) {
+                riskMeter.style.backgroundColor = '#4361ee'; // blue
+            } else {
+                riskMeter.style.backgroundColor = '#ef476f'; // red
+            }
+        }
+
+        // SVG circle animation
+        const circle = document.getElementById('modalRiskCircle');
+        if (circle) {
+            const radius = 80;
+            const circumference = 2 * Math.PI * radius; // ~502
+            const offset = circumference - (riskPercentage / 100) * circumference;
+            circle.style.strokeDasharray = `${circumference}`;
+            circle.style.strokeDashoffset = `${offset}`;
+        }
+
+        // Show modal
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Close Details Modal
+    function closeDetailsModal() {
+        const modal = document.getElementById('detailsModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Expose to window object so inline onclick handles work
+    window.showDetails = showDetails;
+    window.closeDetailsModal = closeDetailsModal;
 
     // Update Summary Stats
     function updateSummaryStats() {
@@ -237,6 +334,11 @@
         const totalCount = document.getElementById('totalCount');
         if (totalCount) {
             totalCount.textContent = filteredHistory.length;
+        }
+        
+        const totalPredictions = document.getElementById('totalPredictions');
+        if (totalPredictions) {
+            totalPredictions.textContent = `${filteredHistory.length} Predictions`;
         }
         
         // Benign cases
@@ -251,6 +353,35 @@
         if (malignantCount) {
             const malignantCases = filteredHistory.filter(item => item.prediction === 'Malignant').length;
             malignantCount.textContent = malignantCases;
+        }
+
+        // Average risk
+        let avg = 0;
+        if (filteredHistory.length > 0) {
+            const sum = filteredHistory.reduce((acc, item) => acc + (item.risk_percentage || 0), 0);
+            avg = sum / filteredHistory.length;
+        }
+        
+        const avgRisk = document.getElementById('avgRisk');
+        if (avgRisk) {
+            avgRisk.textContent = `${avg.toFixed(1)}%`;
+        }
+        
+        const avgRiskScore = document.getElementById('avgRiskScore');
+        if (avgRiskScore) {
+            avgRiskScore.textContent = `Avg Risk: ${avg.toFixed(1)}%`;
+        }
+
+        // Last updated
+        const lastUpdated = document.getElementById('lastUpdated');
+        if (lastUpdated) {
+            let lastDateText = '--';
+            if (filteredHistory.length > 0) {
+                const dates = filteredHistory.map(item => new Date(item.timestamp || 0).getTime());
+                const maxDate = new Date(Math.max(...dates));
+                lastDateText = maxDate.toLocaleDateString();
+            }
+            lastUpdated.textContent = `Updated: ${lastDateText}`;
         }
     }
 
@@ -315,6 +446,120 @@
         if (percentage < 30) return 'low';
         if (percentage < 70) return 'medium';
         return 'high';
+    }
+
+    let distributionChartInstance = null;
+    let trendChartInstance = null;
+
+    function updateCharts() {
+        if (!window.Chart) {
+            console.warn('Chart.js not loaded');
+            return;
+        }
+
+        // --- 1. Distribution Chart ---
+        const distCanvasId = 'distributionChartCanvas';
+        let distContainer = document.getElementById('distributionChart');
+        if (distContainer) {
+            distContainer.innerHTML = `<canvas id="${distCanvasId}"></canvas>`;
+            const ctx = document.getElementById(distCanvasId).getContext('2d');
+            
+            const benignCount = filteredHistory.filter(item => item.prediction === 'Benign').length;
+            const malignantCount = filteredHistory.filter(item => item.prediction === 'Malignant').length;
+
+            if (distributionChartInstance) {
+                distributionChartInstance.destroy();
+            }
+
+            distributionChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Benign', 'Malignant'],
+                    datasets: [{
+                        data: [benignCount, malignantCount],
+                        backgroundColor: ['#06d6a0', '#ef476f'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15,
+                                font: {
+                                    family: "'Poppins', sans-serif"
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // --- 2. Trend Chart ---
+        const trendCanvasId = 'trendChartCanvas';
+        let trendContainer = document.getElementById('trendChart');
+        if (trendContainer) {
+            trendContainer.innerHTML = `<canvas id="${trendCanvasId}"></canvas>`;
+            const ctx = document.getElementById(trendCanvasId).getContext('2d');
+
+            // Sort data chronologically for trend chart
+            const sortedHistory = [...filteredHistory].sort((a, b) => {
+                return new Date(a.timestamp || 0) - new Date(b.timestamp || 0);
+            });
+
+            const labels = sortedHistory.map(item => {
+                const date = new Date(item.timestamp || Date.now());
+                return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+            });
+            const dataPoints = sortedHistory.map(item => item.risk_percentage || 0);
+
+            if (trendChartInstance) {
+                trendChartInstance.destroy();
+            }
+
+            trendChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Risk Percentage',
+                        data: dataPoints,
+                        fill: true,
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#4361ee',
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: value => value + '%'
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     function showLoading() {

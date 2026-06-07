@@ -600,8 +600,16 @@ async function handlePredictionSubmit(e) {
         const result = await response.json();
         console.log('✅ Prediction result:', result);
         
-        //  FIX: Scroll to top before showing modal
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Reset button immediately after successful response
+        predictBtn.innerHTML = `
+            <i class="fas fa-brain"></i>
+            Analyze with AI
+            <span id="loadingSpinner" class="spinner hidden">
+                <i class="fas fa-spinner fa-spin"></i>
+            </span>
+            <span class="btn-glow-effect"></span>
+        `;
+        predictBtn.disabled = false;
         
         // Display the actual results
         displayResults(result);
@@ -609,7 +617,7 @@ async function handlePredictionSubmit(e) {
         // Save to localStorage for history page to detect
         saveToLocalStorage(result);
         
-        //  FIX: Show success notification
+        // Show success notification after modal appears
         setTimeout(() => {
             showSuccessMessage(
                 `Prediction Complete!<br><strong>${result.prediction}</strong><br>Risk: ${result.risk_percentage}% | Confidence: ${result.confidence}`, 
@@ -622,18 +630,16 @@ async function handlePredictionSubmit(e) {
         
         // Show error message
         showErrorMessage(
-            `Failed to get prediction.<br>Error: ${error.message}<br><br>Please check your connection and try again.`, 
+            `Failed to get prediction.<br>Error: ${error.message}<br><br>Please ensure the backend server is running at http://localhost:8000 and try again.`, 
             'Analysis Failed'
         );
         
-        // Don't show mock results - let user retry
+        // Reset button so user can retry
         predictBtn.innerHTML = originalHTML;
         predictBtn.disabled = false;
-        isSubmitting = false;
-        return;
         
     } finally {
-        // Reset loading state
+        // Always reset submitting state
         isSubmitting = false;
     }
 }
@@ -990,24 +996,25 @@ function generateRecommendations(riskPercentage) {
     return recommendations.slice(0, 5);
 }
 
-// ✅ FIXED: Show Results Modal with scroll fix
+// ✅ FIXED: Show Results Modal - reliable display sequence
 function showResultsModal() {
     const modal = document.getElementById('resultsModal');
     if (!modal) return;
     
-    // Remove hidden class
+    // Step 1: Remove hidden (removes display:none) and ensure display is set
     modal.classList.remove('hidden');
+    modal.style.display = 'flex';
     
-    // Disable body scroll
+    // Step 2: Disable body scroll
     document.body.style.overflow = 'hidden';
-    document.body.style.paddingRight = '15px'; // Prevent layout shift
     
-    // Add active class for animation
-    setTimeout(() => {
-        modal.classList.add('active');
-    }, 10);
+    // Step 3: Force browser reflow before adding active class for transition
+    void modal.offsetHeight;
     
-    // Focus on modal for accessibility
+    // Step 4: Add active class for opacity/visibility transition
+    modal.classList.add('active');
+    
+    // Step 5: Accessibility
     modal.setAttribute('aria-hidden', 'false');
     
     console.log('✅ Results modal shown');
@@ -1018,16 +1025,16 @@ function closeResultsModal() {
     const modal = document.getElementById('resultsModal');
     if (!modal) return;
     
-    // Remove active class
+    // Remove active class (triggers opacity/visibility transition)
     modal.classList.remove('active');
     
-    // Wait for animation then hide
+    // Wait for transition then fully hide
     setTimeout(() => {
+        modal.style.display = 'none';
         modal.classList.add('hidden');
         
         // Restore body scroll
         document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
         
         // Update accessibility
         modal.setAttribute('aria-hidden', 'true');
@@ -1147,6 +1154,23 @@ function resetForm() {
     if (preview) {
         preview.classList.add('hidden');
     }
+    
+    // Always re-enable the predict button and restore its label
+    const predictBtn = document.getElementById('predictBtn');
+    if (predictBtn) {
+        predictBtn.disabled = false;
+        predictBtn.innerHTML = `
+            <i class="fas fa-brain"></i>
+            Analyze with AI
+            <span id="loadingSpinner" class="spinner hidden">
+                <i class="fas fa-spinner fa-spin"></i>
+            </span>
+            <span class="btn-glow-effect"></span>
+        `;
+    }
+    
+    // Reset submitting state
+    isSubmitting = false;
     
     // Set defaults again
     setDefaultValues();
