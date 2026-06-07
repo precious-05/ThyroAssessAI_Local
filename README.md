@@ -1,1 +1,0 @@
-# ThyroAssessAI_Local
