@@ -39,7 +39,6 @@ A full-stack web application that leverages Machine Learning to predict thyroid 
   - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
 - [Machine Learning Model](#machine-learning-model)
-- [Screenshots](#screenshots)
 - [Disclaimer](#disclaimer)
 - [License](#license)
 - [Developed By](#developed-by)
@@ -285,21 +284,6 @@ Content-Type: application/json
 | 12 | Thyroid_Cancer_Risk | Integer | 0 / 1 / 2 |
 | 13 | Gender_Male | Float | 0.0 (Female) / 1.0 (Male) |
 
----
-
-## Screenshots
-
-> Screenshots can be added here to showcase the application UI.
-
-| Page | Description |
-|:---|:---|
-| **Home** | Landing page with animated hero section and project overview |
-| **Predict** | Clinical parameter input form with real-time validation and AI analysis |
-| **Results** | Modal displaying risk score, confidence, feature importance chart, and recommendations |
-| **History** | Dashboard with prediction records, distribution charts, and trend analytics |
-| **About** | Project information, team details, and technology stack |
-
----
 
 ## Disclaimer
 
